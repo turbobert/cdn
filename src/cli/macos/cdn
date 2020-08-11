@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [[ $1 = p ]]; then
+    h=$(shasum -ba256 $2 | cut -d ' ' -f 1)
+    echo "Hash is $h"
+    echo "Upload..."
+    curl -k -X POST -F "cdn_upload=@$2" "https://192.168.178.31/cdn.php" | grep $h 1>/dev/null
+    e=$?
+    if [[ $e = 0 ]]; then
+        echo "OK"
+        echo "https://192.168.178.31/cdn-get.php?h=$h"
+        echo "curl -k -o '$2' https://192.168.178.31/cdn-get.php?h=$h"
+        echo "[[https://192.168.178.31/cdn-get.php?h=$h|$2]]"
+    else
+        echo "Failed"
+    fi
+fi
